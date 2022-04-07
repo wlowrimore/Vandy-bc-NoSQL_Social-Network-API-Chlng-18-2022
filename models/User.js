@@ -1,7 +1,4 @@
 const {
-  default: mongoose
-} = require('mongoose');
-const {
   Schema,
   model
 } = require('mongoose');
