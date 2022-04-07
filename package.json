@@ -1,0 +1,24 @@
+{
+  "name": "vandy-bc-nosql_social-network-api-chlng-18-2022",
+  "version": "1.0.0",
+  "description": "NoSQL_Social-Network",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wlowrimore/Vandy-bc-NoSQL_Social-Network-API-Chlng-18-2022.git"
+  },
+  "author": "William Lowrimore",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/wlowrimore/Vandy-bc-NoSQL_Social-Network-API-Chlng-18-2022/issues"
+  },
+  "homepage": "https://github.com/wlowrimore/Vandy-bc-NoSQL_Social-Network-API-Chlng-18-2022#readme",
+  "dependencies": {
+    "express": "^4.17.3",
+    "mongoose": "^6.2.10"
+  }
+}
