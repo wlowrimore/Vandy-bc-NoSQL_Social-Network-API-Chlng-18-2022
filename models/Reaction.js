@@ -8,7 +8,7 @@ const dateFormat = require('../utils/dateFormat');
 const reactionSchema = new Schema({
   reactionId: {
     // uses mongoose ObjectId data type
-    type: mongoose.Types.ObjectId,
+    type: Schema.Types.ObjectId,
     default: () => new Types.ObjectId()
   },
   reactionBody: {
@@ -19,13 +19,13 @@ const reactionSchema = new Schema({
   username: {
     type: String,
     required: true
-  }, 
+  },
   createdAt: {
     type: Date,
     default: Date.now,
     get: createdAtVal => dateFormat(createdAtVal)
   }
-},{
+}, {
   toJSON: {
     getters: true
   },
