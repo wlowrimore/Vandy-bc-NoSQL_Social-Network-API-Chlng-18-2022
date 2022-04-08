@@ -1,10 +1,6 @@
 const {
   User
 } = require('../models');
-const Thought = require('../models/Thought');
-const {
-  populate
-} = require('../models/User');
 
 const userController = {
   // get all Users
@@ -18,7 +14,7 @@ const userController = {
         path: 'friends',
         select: ('-__v')
       })
-      .select('-__id')
+      .select('-__v')
       .sort({
         _id: -1
       })
@@ -62,7 +58,7 @@ const userController = {
   }, res) {
     User.create(body)
       .then(dbUserData => res.json(dbUserData))
-      .catch(err => res.status(400).json(err));
+      .catch(err => res.json(err));
   },
 
   // update a User by Id
