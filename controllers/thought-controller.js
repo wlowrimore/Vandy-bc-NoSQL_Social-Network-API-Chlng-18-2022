@@ -1,12 +1,13 @@
 const {
+  Thought,
   User
 } = require('../models');
 
-const userController = {
-  // get all Users
-  getAllUser(req, res) {
+const thoughtController = {
+  // get all Thoughts
+  getAllThought(req, res) {
     User.find({})
-      .then(dbUserData => res.json(dbUserData))
+      .then(dbThoughtData => res.json(dbThoughtData))
       .catch(err => {
         console.log(err);
         res.status(400).json(err);
@@ -14,20 +15,20 @@ const userController = {
   },
 
   // get one User by Id
-  getUserById({
+  getThoughtById({
     params
   }, res) {
     User.findOne({
         _id: params.id
       })
-      .then(dbUserData => {
-        if (!dbUserData) {
+      .then(dbThoughtData => {
+        if (!dbThoughtData) {
           res.status(404).json({
-            message: 'No user found with this id!'
+            message: 'No thought found with this id!'
           });
           return;
         }
-        res.json(dbUserData);
+        res.json(dbThoughtData);
       })
       .catch(err => {
         console.log(err);
@@ -36,16 +37,16 @@ const userController = {
   },
 
   // create a new User
-  createUser({
+  createThought({
     body
   }, res) {
     User.create(body)
-      .then(dbUserData => res.json(dbUserData))
+      .then(dbThoughtData => res.json(dbThoughtData))
       .catch(err => res.status(400).json(err));
   },
 
   // update a User by Id
-  updateUser({
+  updateThought({
     params,
     body
   }, res) {
@@ -54,36 +55,37 @@ const userController = {
       }, body, {
         new: true
       })
-      .then(dbUserData => {
-        if (!dbUserData) {
+      .then(dbThoughtData => {
+        if (!dbThoughtData) {
           res.status(404).json({
-            message: 'No user found with this id!'
+            message: 'No thought found with this id!'
           });
           return;
         }
-        res.json(dbUserData);
+        res.json(dbThoughtData);
       })
       .catch(err => res.status(400).json(err));
   },
 
   // delete a User
-  deleteUser({
+  deleteThought({
     params
   }, res) {
     User.findOneAndDelete({
         _id: params.id
       })
-      .then(dbUserData => {
-        if (!dbUserData) {
+      .then(dbThoughtData => {
+        if (!dbThoughtData) {
           res.status(404).json({
-            message: 'No user found with this id!'
+            message: 'No thought found with this id!'
           });
           return;
         }
-        res.json(dbUserData);
+        res.json(dbThoughtData);
       })
       .catch(err => res.status(400).json(err));
   }
 };
 
-module.exports = userController;
+module.exports = thoughtController;
+}
