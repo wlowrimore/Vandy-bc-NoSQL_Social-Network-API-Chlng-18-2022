@@ -1,6 +1,5 @@
 const {
-  User,
-  Thought
+  User
 } = require('../models');
 
 const userController = {
@@ -22,7 +21,7 @@ const userController = {
       .then(dbUserData => res.json(dbUserData))
       .catch(err => {
         console.log(err);
-        res.status(400).json(err);
+        res.status(500).json(err);
       });
   },
 
@@ -35,7 +34,7 @@ const userController = {
       })
       .populate({
         path: 'thoughts',
-        select: ('-__v')
+        select: '-__v'
       })
       .select('-__v')
       .then(dbUserData => {
@@ -89,24 +88,51 @@ const userController = {
   deleteUser({
     params
   }, res) {
-    Thought.deleteMany({
-        userId: params.id
+    User.findOneAndDelete({
+        _id: params.id
       })
-      .then(() => {
-        User.findOneAndDelete({
-            userId: params.id
-          })
-          .then(dbUserData => {
-            if (!dbUserData) {
-              res.status(404).json({
-                message: 'No user found with this Id!'
-              });
-              return;
-            }
-            res.json(dbUserData);
+      .then(dbUserData => {
+        if (!dbUserData) {
+          res.status(404).json({
+            message: 'No user found with this Id!'
           });
+          return;
+        }
+        return dbUserData;
       })
-      .catch(err => res.json(err));
+      .then(dbUserData => {
+        User.updateMany({
+            _id: {
+              $in: dbUserData.friends
+            }
+          }, {
+            $pull: {
+              friends: params.userId
+            }
+          })
+          .then(() => {
+            Thought.deleteMany({
+                username: dbUserData.username
+              })
+              .then(() => {
+                res.json({
+                  message: 'You have successfully deleted the User'
+                });
+              })
+              .catch(err => {
+                console.log(err);
+                res.status(400).json(err);
+              })
+          })
+          .catch(err => {
+            console.log(err);
+            res.status(400).json(err);
+          })
+      })
+      .catch(err => {
+        console.log(err);
+        res.status(400).json(err);
+      })
   },
 
   // add friends
