@@ -53,7 +53,7 @@ const thoughtController = {
         return User.findOneAndUpdate({
           _id: body.userId
         }, {
-          $push: {
+          $addToSet: {
             thoughts: ThoughtData._id
           }
         }, {
@@ -78,7 +78,7 @@ const thoughtController = {
     body
   }, res) {
     Thought.findOneAndUpdate({
-        _id: params.id
+        _id: params.thoughtId
       }, {
         $set: body
       }, {
