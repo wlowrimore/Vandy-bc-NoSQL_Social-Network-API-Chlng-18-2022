@@ -168,7 +168,7 @@ const userController = {
     params
   }, res) {
     User.findOneAndDelete({
-        _id: params.thought.Id
+        _id: params.friendId
       })
       .then(deletedFriend => {
         if (!deletedFriend) {
