@@ -27,10 +27,11 @@ const thoughtController = {
     Thought.findOne({
         _id: params.thoughtId
       })
-      .select('-__v')
-      .sort({
-        _id: -1
+      .populate({
+        path: 'reactions',
+        select: '-__v'
       })
+      .select('-__v')
       .then(dbThoughtData => {
         if (!dbThoughtData) {
           res.status(404).json({
@@ -62,7 +63,8 @@ const thoughtController = {
           _id: body.userId
         }, {
           $push: {
-            thoughts: _id
+            thoughts: _id,
+            thoughtText: body.thoughtText
           }
         }, {
           new: true
@@ -70,9 +72,8 @@ const thoughtController = {
       })
       .then(dbThoughtData => dbThoughtData);
     return res.json({
-        message: 'Your Thought has been added'
-      })
-      .catch(err => res.status(400).json(err));
+      message: 'Your Thought has been added'
+    })
   },
 
 
@@ -112,22 +113,27 @@ const thoughtController = {
         _id: params.thoughtId
       }, {
         $push: {
-          reactions: body
+          reactions: {
+            reactionBody: body.reactionBody,
+            username: body.username
+          }
         }
       }, {
         runValidators: true,
         new: true
       })
-      .then((updatedThought => {
-          if (!updatedThought) {
-            res.status(404).json({
-              message: 'No reaction found with this Id!'
-            });
-            return;
-          }
-          res.json(updatedThought);
-        })
-        .catch((err) => res.json(err)));
+      .then(dbThoughtData => {
+        if (!dbThoughtData) {
+          res.status(404).JSON({
+            message: 'No thought found with this Id!'
+          });
+          return;
+        }
+        return res.json({
+          message: 'Reaction posted to Thought!'
+        });
+      })
+      .catch(err => res.status(400).json(err));
   },
 
   // remove comment
@@ -164,7 +170,7 @@ const thoughtController = {
       }, {
         $pull: {
           reactions: {
-            reactionId: params.reactionId
+            _id: params.reactionId
           }
         }
       }, {

@@ -1,5 +1,6 @@
 const {
-  User
+  User,
+  Thought
 } = require('../models');
 
 const userController = {
@@ -8,11 +9,11 @@ const userController = {
     User.find({})
       .populate({
         path: 'thoughts',
-        select: ('-__v')
+        select: '-__v'
       })
       .populate({
         path: 'friends',
-        select: ('-__v')
+        select: '-__v'
       })
       .select('-__v')
       .sort({
@@ -96,7 +97,6 @@ const userController = {
           res.status(404).json({
             message: 'No user found with this Id!'
           });
-          return;
         }
         return dbUserData;
       })
@@ -124,10 +124,7 @@ const userController = {
                 res.status(400).json(err);
               })
           })
-          .catch(err => {
-            console.log(err);
-            res.status(400).json(err);
-          })
+
       })
       .catch(err => {
         console.log(err);
@@ -194,7 +191,9 @@ const userController = {
           });
           return;
         }
-        res.json(dbUserData);
+        return res.status(200).JSON({
+          message: 'Friend removed from your Friend List!'
+        });
       })
       .catch(err => res.json(err));
   },
