@@ -8,11 +8,10 @@ const thoughtController = {
   // get all thoughts
   getAllThoughts(req, res) {
     Thought.find({})
-      .populate({
-        path: 'reactions',
-        select: '-__v'
-      })
       .select('-__v')
+      .sort({
+        _id: -1
+      })
       .then(dbThoughtData => res.json(dbThoughtData))
       .catch(err => {
         console.log(err);
@@ -26,10 +25,6 @@ const thoughtController = {
   }, res) {
     Thought.findOne({
         _id: params.thoughtId
-      })
-      .populate({
-        path: 'reactions',
-        select: '-__v'
       })
       .select('-__v')
       .then(dbThoughtData => {
@@ -52,24 +47,32 @@ const thoughtController = {
     body
   }, res) {
     console.log(body);
-    Thought.create({
-        thoughtText: body.thoughtText,
-        username: body.username
-      })
+    Thought.create(body)
       .then(({
-          _id
-        }) =>
-        User.findOneAndUpdate({
-          _id: body.userId
+        _id
+      }) => {
+        return User.findOneAndUpdate({
+          _id: params.userId
         }, {
           $push: {
             thoughts: _id
           }
         }, {
           new: true
-        }))
-      .then(dbThoughtData => res.json(dbThoughtData))
-      .catch(err => res.status(400).json(err))
+        });
+      })
+      .then(dbThoughtData => {
+        if (!dbThoughtData) {
+          res.status(400).json({
+            message: 'No user found with this Id!'
+          });
+          return;
+        }
+        res.json({
+          message: 'Thought created successfully!'
+        });
+      })
+      .catch(err => res.json(err));
   },
 
   // update a thought
@@ -90,7 +93,6 @@ const thoughtController = {
     return res.json({
       message: 'Your thought was successfully updated!'
     });
-
   },
 
   // add reaction to thought
@@ -103,21 +105,25 @@ const thoughtController = {
       }, {
         $push: {
           reactions: {
-            _id: params.reactionId,
-            reactionBody: body.reactionBody,
-            username: body.username
+            body
           }
         }
       }, {
-        runValidators: true,
         new: true
       })
-      .then(dbThoughtData => dbThoughtData)
-      .catch(err => res.status(400).json(err));
+      .then(dbUserData => {
+        if (!dbUserData) {
+          res.status(404).json({
+            message: 'No User found with this Id'
+          });
+          return;
+        }
+        res.json({
+          message: 'You have succesfully added a reaction to this thought!'
+        });
+      })
+      .catch(err => res.json(err));
 
-    return res.json({
-      message: 'You have successfully added a reaction to this thought!'
-    });
   },
 
   // remove thought

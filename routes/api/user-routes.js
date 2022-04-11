@@ -22,11 +22,7 @@ router
 
 router
   .route('/:userId/friends/:friendId')
-  .post(addToFriendList);
-
-router
-  .route('/:userId/friends/:friendId')
+  .post(addToFriendList)
   .delete(removeFromFriendList);
-
 
 module.exports = router;
