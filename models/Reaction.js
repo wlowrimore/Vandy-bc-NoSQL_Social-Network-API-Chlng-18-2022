@@ -5,7 +5,7 @@ const {
 const dateFormat = require('../utils/dateFormat');
 
 const reationSchema = new Schema({
-  reationId: {
+  reactionId: {
     type: Schema.Types.ObjectId,
     default: () => new Types.ObjectId()
   },

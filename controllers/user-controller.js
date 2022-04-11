@@ -101,11 +101,7 @@ const userController = {
         return dbUserData;
       })
       .then(dbUserData => {
-        User.updateMany({
-            _id: {
-              $in: dbUserData.friends
-            }
-          }, {
+        User.updateMany({}, {
             $pull: {
               friends: params.userId
             }
@@ -143,17 +139,10 @@ const userController = {
           friends: params.friendId
         }
       }, {
-        new: true
+        new: true,
+        runValidators: true
       })
-      .then(dbUserData => {
-        if (!dbUserData) {
-          res.status(400).json({
-            message: 'No user found with this id!'
-          });
-          return;
-        }
-        res.json(dbUserData);
-      })
+      .then(dbUserData => res.json(dbUserData))
       .catch(err => {
         console.log(err)
         res.json(err)
@@ -164,39 +153,18 @@ const userController = {
   removeFromFriendList({
     params
   }, res) {
-    User.findOneAndDelete({
-        _id: params.friendId
-      })
-      .then(deletedFriend => {
-        if (!deletedFriend) {
-          return res.status(404).json({
-            message: 'No friend found with this Id!'
-          });
-          return;
-        }
-        returnUser.findOneAndUpdate({
+    User.findOneAndUpdate({
+        _id: params.userId
+      }, {
+        $pull: {
           friends: params.friendId
-        }, {
-          $pull: {
-            friends: params.friendId
-          }
-        }, {
-          new: true
-        });
-      })
-      .then(dbUserData => {
-        if (!dbUserData) {
-          res.status(404).json({
-            message: 'No friend found with this id!'
-          });
-          return;
         }
-        return res.status(200).JSON({
-          message: 'Friend removed from your Friend List!'
-        });
       })
+      .then(dbUserData => res.status(200).json({
+        message: 'Friend has been removed from your Friend List!'
+      }))
       .catch(err => res.json(err));
-  },
-};
+  }
+}
 
 module.exports = userController;
