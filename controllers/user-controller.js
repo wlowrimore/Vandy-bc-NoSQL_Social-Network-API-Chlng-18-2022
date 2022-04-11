@@ -11,6 +11,10 @@ const userController = {
         path: 'thoughts',
         select: ('-__v')
       })
+      .populate({
+        path: 'friends',
+        select: ('-_v')
+      })
       .select('-__v')
       .sort({
         _id: -1
@@ -32,6 +36,10 @@ const userController = {
       .populate({
         path: 'thoughts',
         select: ('-__v')
+      })
+      .populate({
+        path: 'friends',
+        select: ('-_v')
       })
       .select('-__v')
       .then(dbUserData => {
